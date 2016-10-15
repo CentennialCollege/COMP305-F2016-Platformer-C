@@ -20,6 +20,8 @@ public class PlayerController : MonoBehaviour {
 	[Header("Sound Clips")]
 	public AudioSource JumpSound;
 	public AudioSource DeathSound;
+	public AudioSource CoinSound;
+	public AudioSource HurtSound;
 
 	// Use this for initialization
 	void Start () {
@@ -105,6 +107,16 @@ public class PlayerController : MonoBehaviour {
 			// move the player's position to the spawn point's position
 			this._transform.position = this.SpawnPoint.transform.position;
 			this.DeathSound.Play ();
+		}
+		if (other.gameObject.CompareTag ("Coin")) {
+			//remove the coin
+			Destroy(other.gameObject);
+			this.CoinSound.Play ();
+		}
+		if (other.gameObject.CompareTag ("Enemy")) {
+			//remove the coin
+			Destroy(other.gameObject);
+			this.HurtSound.Play ();
 		}
 	}
 
