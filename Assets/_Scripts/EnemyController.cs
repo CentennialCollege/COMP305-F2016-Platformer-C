@@ -61,6 +61,13 @@ public class EnemyController : MonoBehaviour {
 		}
 	}
 
+	private void OnCollisionEnter2D(Collision2D other) {
+		if (other.gameObject.CompareTag ("Enemy")) {
+			this._flip ();
+		}
+	}
+
+
 	private void OnCollisionStay2D(Collision2D other) {
 		if(other.gameObject.CompareTag("Platform")) {
 			this._isGrounded = true;

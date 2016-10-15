@@ -5,6 +5,7 @@ public class PlayerController : MonoBehaviour {
 	// PRIVATE INSTANCE VARIABLES
 	private Transform _transform;
 	private Rigidbody2D _rigidbody;
+	private Animator _animator;
 	private float _move;
 	private float _jump;
 	private bool _isFacingRight;
@@ -13,8 +14,8 @@ public class PlayerController : MonoBehaviour {
 	// PUBLIC INSTANCE VARIABLES (FOR TESTING)
 	public float Velocity = 10f;
 	public float JumpForce = 100f;
-	public Camera camera;
-	public Transform SpawnPoint;
+	public GameObject camera;
+	public GameObject SpawnPoint;
 
 	[Header("Sound Clips")]
 	public AudioSource JumpSound;
@@ -32,14 +33,19 @@ public class PlayerController : MonoBehaviour {
 			// check if input is present for movement
 			this._move = Input.GetAxis ("Horizontal");
 			if (this._move > 0f) {
+				// when hero is moving set HeroState to 1 which is the Walk State
+				this._animator.SetInteger ("HeroState", 1);
 				this._move = 1;
 				this._isFacingRight = true;
 				this._flip ();
 			} else if (this._move < 0f) {
+				this._animator.SetInteger ("HeroState", 1);
 				this._move = -1;
 				this._isFacingRight = false;
 				this._flip ();
 			} else {
+				// when hero is not moving set HeroState to 0 which is the Idle State
+				this._animator.SetInteger ("HeroState", 0);
 				this._move = 0f;
 			}
 
@@ -75,6 +81,9 @@ public class PlayerController : MonoBehaviour {
 	private void _initialize() {
 		this._transform = GetComponent<Transform> ();
 		this._rigidbody = GetComponent<Rigidbody2D> ();
+		this._animator = GetComponent<Animator> ();
+		this.camera = GameObject.FindWithTag ("MainCamera");
+		this.SpawnPoint = GameObject.FindWithTag ("SpawnPoint");
 		this._move = 0f;
 		this._isFacingRight = true;
 		this._isGrounded = false;
@@ -94,7 +103,7 @@ public class PlayerController : MonoBehaviour {
 	private void OnCollisionEnter2D(Collision2D other) {
 		if (other.gameObject.CompareTag ("DeathPlane")) {
 			// move the player's position to the spawn point's position
-			this._transform.position = this.SpawnPoint.position;
+			this._transform.position = this.SpawnPoint.transform.position;
 			this.DeathSound.Play ();
 		}
 	}
@@ -106,6 +115,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void OnCollisionExit2D(Collision2D other) {
+		this._animator.SetInteger ("HeroState", 2);
 		this._isGrounded = false;
 	}
 }
